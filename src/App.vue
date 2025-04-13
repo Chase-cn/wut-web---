@@ -39,32 +39,34 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /*字体以及一些相关优化*/
   color: #2c3e50;
   height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f5f7fa;
+  justify-content: center;/*水平居中*/
+  align-items: center; /*垂直居中*/
+  /*background-color: #f5f7fa;*/
 }
 
+/*vue的style是全局的,所以说一般局部的要带scoped加以限制*/
 /* 桌面布局样式 (≥800px) */
 .desktop-layout .login-container {
-  width: 40%;
-  min-width: 400px;
-  max-width: 500px;
+  width: 100%;
+  /*min-width: 400px;
+  max-width: 500px;*/
   padding: 40px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  background: white;
+  background-color: white;
 }
 
 /* 移动布局样式 (<800px) */
 .mobile-layout .login-container {
-  width: 90%;
+  width: 100%;
   padding: 20px;
   box-shadow: none;
   border-radius: 0;
-  background: transparent;
+  background-color: white;
 }
 
 .mobile-layout .login-card {
