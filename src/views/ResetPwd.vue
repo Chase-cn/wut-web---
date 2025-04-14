@@ -41,7 +41,7 @@
           <div class="mobile-layout">
             <el-form :model="form" label-width="0px" label-position="top" >
               <el-form-item label="用户名" label-width="0px" >
-                <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
+                <el-input v-model="form.username" placeholder="请输入用户名" ></el-input>
               </el-form-item>
               <el-form-item label="旧密码" label-width="0px">
                 <el-input v-model="form.oldPassword" type="password" placeholder="请输入旧密码"></el-input>
@@ -96,6 +96,7 @@ export default {
 </script>
 
 <style scoped>
+/*一定要搞清楚是'谁的'margin padding在起主导作用,调了没用一定是找错人了*/
 .forget-password-container {
   display: flex;
   justify-content: center;
@@ -145,12 +146,17 @@ export default {
 /* 移动端适配 */
 @media (max-width: 800px) {
   .password-card {
-    width: 100%;
+    width: 120%;
+    min-width: 300px;/*补丁*/
   }
 
   .card-header {
     font-size: 1.2rem;
     /*margin-bottom: -30px;*/
+  }
+
+  .card-body {
+    padding: 0px;
   }
 
   .card-footer {
