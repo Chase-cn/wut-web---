@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div :class="['login-container', { 'mobile-layout': isMobile }]">
     <el-card class="login-card">
       <h2>用户登录</h2>
       <div class="login-content">
@@ -40,7 +40,10 @@
 </template>
 
 <script>
+import responsiveMixin from '@/utils/responsive'
 export default {
+  mixins: [responsiveMixin], // 增加响应式布局的内容
+
   data () {
     return {
       loginForm: {
@@ -75,6 +78,7 @@ export default {
 </script>
 
 <style scoped>
+/*基础样式:通用*/
 .login-container {
   display: flex;
   justify-content: center;
@@ -82,7 +86,12 @@ export default {
   height: 100vh;
   background-color: white;
 }
-.login-card {
+/* 桌面端样式 + 部分通用*/
+.login-container:not(.mobile-layout) {
+  flex-direction: row;
+}
+
+.login-container:not(.mobile-layout) >.login-card {
   width: 50%;  /* 增加宽度 */
   padding: 30px;
 }
@@ -92,23 +101,25 @@ h2 {
   color: #333;
 }
 
-.login-content {
+.login-container:not(.mobile-layout) .login-content {
   display: flex;
   justify-content: space-between;
 }
 
-.login-left {
+/*先搭框架*/
+.login-container:not(.mobile-layout) .login-left {
   width: 48%;
   padding-right: 20px;
   /*分割线是怎么来的?相当于加了个右边框*/
   border-right: 1px solid #eee;
 }
 
-.login-right {
+.login-container:not(.mobile-layout) .login-right {
   width: 48%;
   padding-left: 20px;
 }
 
+/*再填内容*/
 .third-party-login {
   display: flex;
   flex-direction: column;
@@ -143,5 +154,17 @@ h2 {
 
 .el-divider--vertical {
   margin: 0 10px;
+}
+
+/* 移动端样式 */
+.login-container.mobile-layout {
+  flex-direction: column;
+}
+.login-container.mobile-layout .login-left {
+  width: 100%;
+}
+.login-container.mobile-layout .login-card {
+  width: 70%;  /* 增加宽度 */
+  margin-bottom: 20%;
 }
 </style>
