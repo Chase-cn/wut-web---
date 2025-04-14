@@ -165,7 +165,7 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 20px;
+  padding: 0px;
   background-color: white;
 }
 
@@ -253,32 +253,38 @@ export default {
 }
 
 /* 移动端适配 */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
+  .register-container {
+    height: 100%;/*单一滚动条补丁*/
+  }
+
   .register-card {
     width: 100%;
-    height: 1200px;
-    /*min-width: 400px;*/
+    height: 800px; /*设置为具体的px值可以补丁el-card吃内容的问题*/
+    min-width: 380px;/*拉宽遮进度条*/
+    overflow-y: auto;/*进度条*/
+    margin-top: -30px;/*遮刘海*/
   }
+
   .card-header {
     font-size: 1.2rem;
   }
+
   .mobile-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    padding: 10%;
+    margin-top: -15px;/*表单主体(独属于mobile部分) 离卡头近一些*/
   }
+
   .card-footer {
     flex-direction: column;
-
+    justify-content: flex-start;
     gap: 10px;
     padding: 15px 0;
     margin-top: 10px;
-    margin-left: -10px;
   }
 
   .card-footer .el-button {
     width: 100%;
+    margin-left: -3px;/*对齐补丁*/
   }
 
   .avatar-uploader {
