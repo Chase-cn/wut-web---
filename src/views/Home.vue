@@ -57,7 +57,7 @@
         <div class="user-info">
           <h2>欢迎 {{ username }}</h2>
           <div class="avatar-container">
-            <el-avatar :size="80" :src="userAvatar"></el-avatar>
+            <el-avatar :size="150" :src="userAvatar"></el-avatar>
           </div>
         </div>
         <div class="calendar-container">
@@ -70,9 +70,10 @@
     <div v-else class="mobile-layout">
       <div class="mobile-header">
         <el-dropdown @command="handleMobileMenu">
-          <span class="mobile-menu-trigger">
+<!--          span的问题,用div标签就可以正常弹出下拉框-->
+          <div class="mobile-menu-trigger">
             <i class="el-icon-menu"></i>
-          </span>
+          </div>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="home">首页</el-dropdown-item>
@@ -123,13 +124,13 @@ export default {
       this.currentTheme = theme
     },
     handleMobileMenu (command) {
-      if (command === 'home') {
-        this.goHome()
-      } else if (command === 'theme') {
-        this.changeTheme(this.currentTheme === 'blue' ? 'yellow' : 'blue')
-      } else {
-        // 其他菜单项处理
-      }
+      // if (command === 'home') {
+      //   this.goHome()
+      // } else if (command === 'theme') {
+      //   this.changeTheme(this.currentTheme === 'blue' ? 'yellow' : 'blue')
+      // } else {
+      //   // 其他菜单项处理
+      // }
     }
   }
 }
@@ -211,6 +212,7 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 20px;
+  margin-bottom: 30%;
 }
 
 .avatar-container {
@@ -249,13 +251,45 @@ export default {
 .blue {
   --primary-color: #409EFF;
   --secondary-color: #ecf5ff;
+  --bg-color: #f5f9ff; /* 新增蓝色主题背景色 */
+  --sidebar-bg: #e6f0ff; /* 新增侧边栏背景色 */
 }
 
 .yellow {
   --primary-color: #E6A23C;
   --secondary-color: #fdf6ec;
+  --bg-color: #fffaf0; /* 新增黄色主题背景色 */
+  --sidebar-bg: #fff5e6; /* 新增侧边栏背景色 */
 }
 
+/* 应用背景色到整体布局 */
+.app-container.blue {
+  background-color: var(--bg-color);
+}
+
+.app-container.yellow {
+  background-color: var(--bg-color);
+}
+
+/* 侧边栏背景色 */
+.blue .sidebar {
+  background-color: var(--sidebar-bg);
+}
+
+.yellow .sidebar {
+  background-color: var(--sidebar-bg);
+}
+
+/* 主内容区背景色 */
+.blue .main-content {
+  background-color: var(--bg-color);
+}
+
+.yellow .main-content {
+  background-color: var(--bg-color);
+}
+
+/* 保留原有的悬停和激活状态样式 */
 .blue .menu-item:hover,
 .blue .el-menu-item:hover,
 .blue .el-submenu__title:hover {
@@ -291,5 +325,6 @@ export default {
     width: 100%;
     flex: none;
   }
+
 }
 </style>
