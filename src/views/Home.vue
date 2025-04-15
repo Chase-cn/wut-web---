@@ -68,10 +68,12 @@
 
     <!-- 移动端布局 -->
     <div v-else class="mobile-layout">
-      <div class="mobile-header">
-        <el-dropdown @command="handleMobileMenu">
-<!--          span的问题,用div标签就可以正常弹出下拉框-->
-          <div class="mobile-menu-trigger">
+<!--      用span标签代替div就可以解决秒弹秒退的问题,疑似是el-dropdown也会处理div的click-->
+<!--      行内容器span相对于块容器div似乎事件捕获逻辑更简单,方便处理多次触发的问题-->
+      <span class="mobile-header">
+        <el-dropdown  @command="handleMobileMenu" @click.native.stop trigger="click">
+<!--          span的问题(可能行内显示下拉框被遮蔽了),用div标签就可以正常弹出下拉框-->
+          <div class="mobile-menu-trigger" @click.stop>
             <i class="el-icon-menu"></i>
           </div>
           <template #dropdown>
@@ -84,7 +86,7 @@
           </template>
         </el-dropdown>
         <h2>欢迎 {{ username }}</h2>
-      </div>
+      </span>
       <div class="mobile-content">
         <el-calendar v-model="currentDate"></el-calendar>
       </div>
@@ -124,13 +126,13 @@ export default {
       this.currentTheme = theme
     },
     handleMobileMenu (command) {
-      // if (command === 'home') {
-      //   this.goHome()
-      // } else if (command === 'theme') {
-      //   this.changeTheme(this.currentTheme === 'blue' ? 'yellow' : 'blue')
-      // } else {
-      //   // 其他菜单项处理
-      // }
+      if (command === 'home') {
+        this.goHome()
+      } else if (command === 'theme') {
+        this.changeTheme(this.currentTheme === 'blue' ? 'yellow' : 'blue')
+      } else {
+        // 其他菜单项处理
+      }
     }
   }
 }
