@@ -484,12 +484,13 @@ export default {
 /* 桌面端样式 */
 .desktop-layout {
   display: flex;
+  justify-content: flex-start; /* 明确左对齐 */
   width: 100%;
   height: 100%;
 }
 
 .sidebar {
-  width: 220px;
+  width: 230px;
   background-color: #f5f5f5;
   padding: 20px 0;
   display: flex;
@@ -540,6 +541,7 @@ export default {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
+  width:1350px;
 }
 
 .user-management-container {
