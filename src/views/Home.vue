@@ -129,6 +129,7 @@ export default {
       if (command === 'home') {
         this.goHome()
       } else if (command === 'theme') {
+        // 两个主题下切换-很妙的设计
         this.changeTheme(this.currentTheme === 'blue' ? 'yellow' : 'blue')
       } else {
         // 其他菜单项处理

@@ -4,15 +4,17 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import ResetPwd from '../views/ResetPwd.vue'
 import Home from '../views/Home.vue'
+import UserMng from '../views/UserManagement.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/', redirect: '/home' },
+  { path: '/', redirect: '/user-management' },
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/reset-password', component: ResetPwd },
-  { path: '/home', component: Home }
+  { path: '/home', component: Home },
+  { path: '/user-management', component: UserMng }
 ]
 
 const router = new VueRouter({
