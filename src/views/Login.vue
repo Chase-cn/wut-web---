@@ -69,9 +69,17 @@ export default {
         }
       })
     },
-    thirdPartyLogin (type) {
-      this.$message(`正在跳转${type}登录...`)
+    async thirdPartyLogin (type) {
+      this.$message(`正在跳转${type}登录...`, 2000)
       // 这里添加第三方登录逻辑
+      try {
+        // 强制等待 2 秒（不可跳过）
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        // 等待结束后执行路由跳转
+        this.$router.push('/home')
+      } finally {
+        this.$message(' 登录成功！', 1000)
+      }
     }
   }
 }

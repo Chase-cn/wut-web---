@@ -321,6 +321,7 @@ export default {
     goHome () {
       this.activeMenu = ''
       // 实际项目中这里应该是路由跳转
+      this.$router.push('/home')
     },
     handleMenuSelect (index) {
       this.activeMenu = index

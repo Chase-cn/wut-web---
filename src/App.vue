@@ -22,10 +22,10 @@ export default {
     this.checkScreenSize()
     window.addEventListener('resize', this.checkScreenSize)
 
-    // // 确保打开应用时跳转到登录页 暂时不需要
-    // if (this.$route.path !== '/login') {
-    //   this.$router.replace('/login')
-    // }
+    // 确保打开应用时跳转到登录页
+    if (this.$route.path !== '/login') {
+      this.$router.replace('/login')
+    }
   },
   beforeDestroy () {
     window.removeEventListener('resize', this.checkScreenSize)

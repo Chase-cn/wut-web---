@@ -118,6 +118,7 @@ export default {
       this.activeMenu = index
       if (index === '1-1') {
         // 用户管理跳转
+        this.$router.push('/user-management')
       } else if (index === '1-2') {
         // 文章管理跳转
       }
@@ -131,6 +132,8 @@ export default {
       } else if (command === 'theme') {
         // 两个主题下切换-很妙的设计
         this.changeTheme(this.currentTheme === 'blue' ? 'yellow' : 'blue')
+      } else if (command === 'user') {
+        this.$router.push('/user-management')
       } else {
         // 其他菜单项处理
       }

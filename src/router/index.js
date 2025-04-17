@@ -9,7 +9,7 @@ import UserMng from '../views/UserManagement.vue'
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/', redirect: '/user-management' },
+  { path: '/', redirect: '/login' },
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/reset-password', component: ResetPwd },
