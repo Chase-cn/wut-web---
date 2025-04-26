@@ -108,6 +108,12 @@ export default {
       currentTheme: 'blue' // 默认蓝色主题
     }
   },
+
+  activated () {
+    // 在生命周期中获取 store 数据
+    this.currentTheme = this.$store.state.theme
+  },
+
   methods: {
     goHome () {
       // 首页跳转逻辑

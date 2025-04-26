@@ -317,6 +317,10 @@ export default {
   created () {
     this.mockUserData()
   },
+  activated () {
+    // 在生命周期中获取 store 数据
+    this.currentTheme = this.$store.state.theme
+  },
   methods: {
     goHome () {
       this.activeMenu = ''
