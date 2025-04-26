@@ -748,6 +748,7 @@ export default {
 @media (max-width: 800px) {
   .main-content {
     padding: 10px;
+    width: 100%;  /*补丁,移动端响应式*/
   }
 
   .user-management-container {

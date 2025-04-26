@@ -14,7 +14,7 @@
         <template v-if="!isMobile">
           <div class="desktop-layout">
             <div class="left-section">
-              <el-form :model="form" label-width="100px" label-position="right">
+              <el-form :model="form" :rules="rules" ref="form" label-width="100px" label-position="right">
                 <el-form-item label="用户名" prop="username">
                   <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
                 </el-form-item>
@@ -47,7 +47,7 @@
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
               >
-                <!-- 替换为实际的上传接口 -->
+                <!-- 替换为实际的上传接口 action-->
               <img v-if="form.avatar" :src="form.avatar" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
@@ -59,7 +59,7 @@
         <!-- 移动端布局 -->
         <template v-else>
           <div class="mobile-layout">
-            <el-form :model="form" label-width="100px" label-position="top">
+            <el-form :model="form" :rules="rules" ref="form" label-width="100px" label-position="top">
               <el-form-item label="用户名" prop="username">
                 <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
               </el-form-item>
@@ -124,15 +124,70 @@ export default {
         email: '',
         birthday: '',
         avatar: ''
+      },
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+        ],
+        confirmPassword: [
+          { required: true, message: '请再次输入密码', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (value !== this.form.password) {
+                callback(new Error('两次输入的密码不一致！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          {
+            type: 'email',
+            message: '请输入正确的邮箱格式',
+            trigger: ['blur', 'change']
+          }
+        ],
+        birthday: [
+          {
+            type: 'date',
+            required: true,
+            message: '请选择出生日期',
+            trigger: 'change'
+          }
+        ],
+        avatar: [
+          { required: true, message: '请上传头像', trigger: 'change' }
+        ]
       }
     }
   },
   methods: {
-    handleRegister () {
+    async handleRegister () {
       // 处理注册逻辑
       console.log('提交注册', this.form)
-      // 这里可以添加表单验证和提交逻辑
+      // 补丁,关于日期类型转化
+      this.form.birthday = new Date(this.form.birthday)
+      console.log(typeof this.form.birthday)
+      try {
+        // 强行传图片
+        this.form.avatar = 'C:\\Users\\Chase\\Pictures\\pic.png'
+        await this.$refs.form.validate() // 验证表单
+        // const res = await axios.post('/api/register', this.form)
+        this.$message.success('注册成功！')
+        this.$router.push('/login') // 跳转到登录页
+      } catch (error) {
+        this.$message.error('注册失败：' + error.message)
+      }
     },
+
     handleBack () {
       // 返回登录页面逻辑
       console.log('返回登录')
