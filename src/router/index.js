@@ -24,18 +24,11 @@ const router = new VueRouter({
   routes
 })
 
+// 全局的路由首位无法获得组件页的实时数据,只能在页面内部的beforeRouteLeave中实现
 router.beforeEach((to, from, next) => {
-  // 1. 获取来源页面的组件实例
-  const fromComponent = from.matched[0]?.components?.default
-
-  // 2. 检查来源组件是否有 currentTheme 字段
-  if (fromComponent && fromComponent.data?.().currentTheme) {
-    const theme = fromComponent.data().currentTheme
-    store.commit('SET_THEME', theme) // 更新 Vuex 中的主题
-    console.log('从来源页面获取主题:', theme)
-  }
-
-  next() // 放行路由
+  const fromData = store.state.theme // 获取实时数据
+  console.log('来源页主题:', fromData)
+  next()
 })
 
 export default router

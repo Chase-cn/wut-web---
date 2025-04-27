@@ -317,9 +317,14 @@ export default {
   created () {
     this.mockUserData()
   },
-  activated () {
+  mounted () {
     // 在生命周期中获取 store 数据
     this.currentTheme = this.$store.state.theme
+  },
+  beforeRouteLeave (to, from, next) {
+    // 离开时提交数据到 Vuex
+    this.$store.commit('SET_THEME', this.currentTheme)
+    next()
   },
   methods: {
     goHome () {
