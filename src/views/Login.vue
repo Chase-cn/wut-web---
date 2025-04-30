@@ -7,8 +7,10 @@
         <div class="login-left">
           <div class="third-party-login">
             <el-button class="login-btn qq" icon="el-icon-qq" @click="thirdPartyLogin('qq')">QQ登录</el-button>
-            <el-button class="login-btn wechat" icon="el-icon-wechat" @click="thirdPartyLogin('wechat')">微信登录</el-button>
-            <el-button class="login-btn alipay" icon="el-icon-bank-card" @click="thirdPartyLogin('alipay')">支付宝登录</el-button>
+            <el-button class="login-btn wechat" icon="el-icon-wechat" @click="thirdPartyLogin('wechat')">微信登录
+            </el-button>
+            <el-button class="login-btn alipay" icon="el-icon-bank-card" @click="thirdPartyLogin('alipay')">支付宝登录
+            </el-button>
           </div>
         </div>
 
@@ -31,7 +33,7 @@
       <!-- 底部链接 -->
       <div class="login-footer">
         <el-link type="primary" @click="$router.push('/register')">注册用户</el-link>
-      <!--这里用的是分割线而不是border-->
+        <!--这里用的是分割线而不是border-->
         <el-divider direction="vertical"></el-divider>
         <el-link type="primary" @click="$router.push('/reset-password')">修改密码</el-link>
       </div>
@@ -41,6 +43,8 @@
 
 <script>
 import responsiveMixin from '@/utils/responsive'
+import api from '@/api/api'
+
 export default {
   mixins: [responsiveMixin], // 增加响应式布局的内容
 
@@ -52,21 +56,52 @@ export default {
       },
       rules: {
         username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' }
+          {
+            required: true,
+            message: '请输入用户名',
+            trigger: 'blur'
+          }
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
+          {
+            required: true,
+            message: '请输入密码',
+            trigger: 'blur'
+          }
         ]
       }
     }
   },
   methods: {
     submitForm () {
+      // rules校验立大功 (注意rules要在<标签>中注册,这可能是为什么要用$refs.loginForm进行校验的原因(本体))
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          // 这里添加登录逻辑
-          this.$message.success('登录成功')
-          this.$router.push('/home')
+          // 转化成表单参数格式
+          const params = new URLSearchParams()
+          params.append('name', this.loginForm.username)
+          params.append('password', this.loginForm.password)
+          /**
+           * (
+           *     url: string,
+           *     data?: URLSearchParams,
+           *     config?: AxiosRequestConfig<URLSearchParams>,
+           * ) 最基本参数方案
+           */
+          api.post('/users/login', params, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          })
+            .then(res => {
+              console.log('登录成功!', res)
+
+              this.$message.success('登录成功')
+              this.$router.push('/home')
+            })
+            .catch(err => {
+              console.log(err)
+            })
         }
       })
     },
@@ -95,15 +130,17 @@ export default {
   height: 100vh;
   background-color: white;
 }
+
 /* 桌面端样式 + 部分通用*/
 .login-container:not(.mobile-layout) {
   flex-direction: row;
 }
 
-.login-container:not(.mobile-layout) >.login-card {
-  width: 50%;  /* 增加宽度 */
+.login-container:not(.mobile-layout) > .login-card {
+  width: 50%; /* 增加宽度 */
   padding: 30px;
 }
+
 h2 {
   text-align: center;
   margin-bottom: 30px;
@@ -140,15 +177,18 @@ h2 {
   margin-bottom: 15px;
   width: 100%;
 }
+
 .login-btn.qq {
-  margin-left:10px;/*补丁*/
+  margin-left: 10px; /*补丁*/
   background-color: #12B7F5;
   color: white;
 }
+
 .login-btn.wechat {
   background-color: #07C160;
   color: white;
 }
+
 .login-btn.alipay {
   background-color: #1677FF;
   color: white;
@@ -169,11 +209,13 @@ h2 {
 .login-container.mobile-layout {
   flex-direction: column;
 }
+
 .login-container.mobile-layout .login-left {
   width: 100%;
 }
+
 .login-container.mobile-layout .login-card {
-  width: 70%;  /* 增加宽度 */
+  width: 70%; /* 增加宽度 */
   margin-bottom: 20%;
 }
 </style>
