@@ -3,7 +3,7 @@ import axios from 'axios'
 
 // 创建 axios 实例
 const api = axios.create({
-  baseURL: 'http://localhost:9000/api', // 你的 API 基础地址
+  baseURL: 'http://localhost:8081/api', // 你的 API 基础地址
   timeout: 10000, // 请求超时时间
   headers: {
     // 'Content-Type': 'application/json'
@@ -81,7 +81,7 @@ api.interceptors.response.use(
     /**
      * 这个仅仅是将其标记了下,使其可以触发.catch,可以简单看成激活
      */
-    return Promise.reject(error)
+    return Promise.reject(error.response.data)// 这里假设网络通畅,仅处理500和错误状态码的情况
   }
 )
 

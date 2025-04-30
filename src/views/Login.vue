@@ -95,12 +95,19 @@ export default {
           })
             .then(res => {
               console.log('登录成功!', res)
-
+              this.$store.dispatch('setUserInfo', res)
               this.$message.success('登录成功')
               this.$router.push('/home')
             })
             .catch(err => {
               console.log(err)
+              if (err.code === 404) {
+                this.$message.error(err.message)
+              } else if (err.code === 400) {
+                this.$message.error('密码错误')
+              } else {
+                this.$message.error('系统繁忙,请稍后再试')
+              }
             })
         }
       })
