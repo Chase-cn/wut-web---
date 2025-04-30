@@ -68,6 +68,7 @@
 
 <script>
 import responsiveMixin from '@/utils/responsive'
+import api from '@/api/api'
 export default {
   mixins: [responsiveMixin], // 替换为实际的mixin名称
   data () {
@@ -120,44 +121,43 @@ export default {
   },
   methods: {
     async handleSubmit () {
-      try {
-        // 1. 触发表单验证
-        const valid = await this.$refs.form.validate()
-        if (!valid) return // 验证失败时终止
+      // 1. 触发表单验证
+      const valid = await this.$refs.form.validate()
+      if (!valid) return // 验证失败时终止
 
-        // 2. 检查新旧密码是否相同（额外校验，避免绕过前端规则）
-        if (this.form.newPassword === this.form.oldPassword) {
-          this.$message.error('新密码不能与旧密码相同')
-          return
-        }
-
-        // 3. 构造请求数据（可根据后端需求调整字段）
-        // const payload = {
-        //   username: this.form.username,
-        //   oldPassword: this.form.oldPassword,
-        //   newPassword: this.form.newPassword
-        // }
-
-        // 4. 调用API提交修改密码请求
-        // const res = await axios.post('/api/change-password', payload)
-
-        // 5. 处理响应结果
-        // if (res.data.success) {
-        this.$message.success('密码修改成功！')
-        this.$router.push('/login') // 跳转到登录页
-        // } else {
-        // this.$message.error(res.data.message || '密码修改失败')
-        // }
-      } catch (error) {
-        // 6. 统一错误处理
-        console.error('修改密码失败:', error)
-        this.$message.error(
-          error.response?.data?.message ||
-          '网络错误，请稍后重试'
-        )
-      } finally {
-        // 7. 可选的清理操作（如禁用按钮状态恢复）
+      // 2. 检查新旧密码是否相同（额外校验，避免绕过前端规则）
+      if (this.form.newPassword === this.form.oldPassword) {
+        this.$message.error('新密码不能与旧密码相同')
+        return
       }
+
+      // 3. 构造请求数据（可根据后端需求调整字段）
+      // 转化成表单参数格式
+      const params = new URLSearchParams()
+      params.append('name', this.form.username)
+      params.append('oldPassword', this.form.oldPassword)
+      params.append('newPassword', this.form.newPassword)
+
+      // 4. 调用API提交修改密码请求
+      api.post('/users/change-password', params, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+        .then(res => {
+          console.log(res)
+          if (res) {
+            this.$message.success('修改成功! ')
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          if (err.code === 404) {
+            this.$message.error(err.message)
+          } else if (err.code === 400) {
+            this.$message.error(err.message)
+          }
+        })
     },
     handleBack () {
       // 返回登录页面逻辑

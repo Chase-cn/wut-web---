@@ -112,6 +112,8 @@ export default {
   mounted () {
     // 在生命周期中获取 store 数据
     this.currentTheme = this.$store.state.theme
+    // console.log(this.$store.state.userInfo)
+    this.username = this.$store.getters.getUserName
   },
   beforeRouteLeave (to, from, next) {
     // 离开时提交数据到 Vuex

@@ -30,6 +30,7 @@ export default new Vuex.Store({
     // 获取用户信息
     getUserInfo: state => state.userInfo,
     // 获取特定用户字段
+    getUserName: state => state.userInfo?.name,
     getUserAvatar: state => state.userInfo?.avatar,
     getUserEmail: state => state.userInfo?.email
   },
