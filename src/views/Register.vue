@@ -43,13 +43,13 @@
               <el-upload
                 class="avatar-uploader"
                 action="/api/upload"
-              :show-file-list="false"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
               >
                 <!-- 替换为实际的上传接口 action-->
-              <img v-if="form.avatar" :src="form.avatar" class="avatar" />
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                <img v-if="form.avatar" :src="form.avatar" class="avatar"/>
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
               <div class="upload-tip">建议尺寸：200×200像素，支持JPG、PNG格式</div>
             </div>
@@ -81,19 +81,19 @@
                   style="width: 100%"
                 ></el-date-picker>
               </el-form-item>
-              <el-form-item label="头像上传">
+              <el-form-item label="头像上传" prop="avatar">
                 <div class="upload-header">请上传头像</div>
                 <el-upload
                   class="avatar-uploader"
                   action="/api/upload"
 
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccess"
+                  :before-upload="beforeAvatarUpload"
                 >
                   <!-- 替换为实际的上传接口 -->
-                <img v-if="form.avatar" :src="form.avatar" class="avatar" />
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  <img v-if="form.avatar" :src="form.avatar" class="avatar"/>
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
                 <div class="upload-tip">建议尺寸：200×200像素，支持JPG、PNG格式</div>
               </el-form-item>
@@ -113,6 +113,8 @@
 
 <script>
 import responsiveMixin from '@/utils/responsive'
+import api from '@/api/api'
+
 export default {
   mixins: [responsiveMixin], // 替换为实际的mixin名称
   data () {
@@ -127,15 +129,37 @@ export default {
       },
       rules: {
         username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+          {
+            required: true,
+            message: '请输入用户名',
+            trigger: 'blur'
+          },
+          {
+            min: 3,
+            max: 16,
+            message: '长度在 3 到 16 个字符',
+            trigger: 'blur'
+          }
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+          {
+            required: true,
+            message: '请输入密码',
+            trigger: 'blur'
+          },
+          {
+            min: 6,
+            max: 20,
+            message: '长度在 6 到 20 个字符',
+            trigger: 'blur'
+          }
         ],
         confirmPassword: [
-          { required: true, message: '请再次输入密码', trigger: 'blur' },
+          {
+            required: true,
+            message: '请再次输入密码',
+            trigger: 'blur'
+          },
           {
             validator: (rule, value, callback) => {
               if (value !== this.form.password) {
@@ -148,7 +172,11 @@ export default {
           }
         ],
         email: [
-          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          {
+            required: true,
+            message: '请输入邮箱',
+            trigger: 'blur'
+          },
           {
             type: 'email',
             message: '请输入正确的邮箱格式',
@@ -164,7 +192,11 @@ export default {
           }
         ],
         avatar: [
-          { required: true, message: '请上传头像', trigger: 'change' }
+          {
+            required: true,
+            message: '请上传头像',
+            trigger: 'change'
+          }
         ]
       }
     }
@@ -174,18 +206,45 @@ export default {
       // 处理注册逻辑
       console.log('提交注册', this.form)
       // 补丁,关于日期类型转化
-      this.form.birthday = new Date(this.form.birthday)
-      console.log(typeof this.form.birthday)
-      try {
-        // 强行传图片
-        this.form.avatar = 'C:\\Users\\Chase\\Pictures\\pic.png'
-        await this.$refs.form.validate() // 验证表单
-        // const res = await axios.post('/api/register', this.form)
-        this.$message.success('注册成功！')
-        this.$router.push('/login') // 跳转到登录页
-      } catch (error) {
-        this.$message.error('注册失败：' + error.message)
+      if (this.form.birthday.length > 0) {
+        this.form.birthday = new Date(this.form.birthday)
       }
+      // console.log('生日', typeof this.form.birthday)
+
+      // 验证表单
+      const valid = await this.$refs.form.validate()
+      // const res = await axios.post('/api/register', this.form)
+      if (!valid) {
+        return
+      }
+
+      // 设置默认头像
+      if (this.form.avatar.length < 1) {
+        this.form.avatar = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+      }
+
+      // 构造请求体
+      const params = {
+        name: this.form.username,
+        email: this.form.email,
+        password: this.form.password,
+        birthday: this.form.birthday,
+        avatar: this.form.avatar // avatar打错了,改了半天bug,无语。。。
+      }
+
+      console.log('传给后端的注册信息', params)
+
+      api.post('/users/register', params, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        console.log(response)
+        this.$message.success('注册成功! ')
+        this.$router.push('/login') // 跳转到登录页
+      }).catch(error => {
+        this.$message.error(error.message)
+      })
     },
 
     handleBack () {
@@ -195,7 +254,9 @@ export default {
     },
     handleAvatarSuccess (res, file) {
       // 头像上传成功回调
-      this.form.avatar = URL.createObjectURL(file.raw)
+      console.log(res)
+      // this.form.avatar = URL.createObjectURL(file.raw)  //将网络url转化为本地可用的url
+      this.form.avatar = res
     },
     beforeAvatarUpload (file) {
       // 头像上传前校验
@@ -310,15 +371,15 @@ export default {
 /* 移动端适配 */
 @media (max-width: 800px) {
   .register-container {
-    height: 100%;/*单一滚动条补丁*/
+    height: 100%; /*单一滚动条补丁*/
   }
 
   .register-card {
     width: 100%;
     height: 800px; /*设置为具体的px值可以补丁el-card吃内容的问题*/
-    min-width: 380px;/*拉宽遮进度条*/
-    overflow-y: auto;/*进度条*/
-    margin-top: -30px;/*遮刘海*/
+    min-width: 380px; /*拉宽遮进度条*/
+    overflow-y: auto; /*进度条*/
+    margin-top: -30px; /*遮刘海*/
   }
 
   .card-header {
@@ -326,7 +387,7 @@ export default {
   }
 
   .mobile-layout {
-    margin-top: -15px;/*表单主体(独属于mobile部分) 离卡头近一些*/
+    margin-top: -15px; /*表单主体(独属于mobile部分) 离卡头近一些*/
   }
 
   .card-footer {
@@ -339,7 +400,7 @@ export default {
 
   .card-footer .el-button {
     width: 100%;
-    margin-left: -3px;/*对齐补丁*/
+    margin-left: -3px; /*对齐补丁*/
   }
 
   .avatar-uploader {
