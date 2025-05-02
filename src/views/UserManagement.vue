@@ -139,7 +139,7 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-        <h2>用户管理</h2>
+        <h2>联系人管理</h2>
       </span>
       <div class="mobile-content">
         <div class="mobile-operation-bar">
@@ -228,12 +228,41 @@
         <el-form-item label="姓名" prop="name">
           <el-input v-model="userForm.name"></el-input>
         </el-form-item>
+
+        <!-- 省份选择 -->
         <el-form-item label="省份" prop="province">
-          <el-input v-model="userForm.province"></el-input>
+          <el-select
+            v-model="userForm.province"
+            placeholder="请选择省份"
+            @change="handleProvinceChange"
+            clearable
+          >
+            <el-option
+              v-for="item in provinceOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
+
+        <!-- 城市选择 -->
         <el-form-item label="市区" prop="city">
-          <el-input v-model="userForm.city"></el-input>
+          <el-select
+            v-model="userForm.city"
+            placeholder="请先选择省份"
+            :disabled="!userForm.province"
+            clearable
+          >
+            <el-option
+              v-for="item in cityOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
+
         <el-form-item label="地址" prop="address">
           <el-input v-model="userForm.address"></el-input>
         </el-form-item>
@@ -242,9 +271,9 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-      </span>
+      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="submitForm">确 定</el-button>
+    </span>
     </el-dialog>
   </div>
 </template>
@@ -252,6 +281,7 @@
 <script>
 import responsiveMixin from '@/utils/responsive'
 import api from '@/api/api'
+import { provinceAndCityData } from 'element-china-area-data'
 
 export default {
   mixins: [responsiveMixin],
@@ -268,8 +298,11 @@ export default {
       pageSize: 10,
       total: 0,
       // 对话框相关
+      dialogTitle: '',
       dialogVisible: false,
-      dialogTitle: '新增用户',
+      editIndex: -1,
+      provinceOptions: [], // 省份选项
+      cityOptions: [], // 城市选项
       userForm: {
         id: '',
         name: '',
@@ -279,40 +312,26 @@ export default {
         zip: ''
       },
       rules: {
-        name: [
-          {
-            required: true,
-            message: '请输入姓名',
-            trigger: 'blur'
-          },
-          {
-            min: 2,
-            max: 10,
-            message: '长度在 2 到 10 个字符',
-            trigger: 'blur'
-          }
-        ],
-        province: [
-          {
-            required: true,
-            message: '请输入省份',
-            trigger: 'blur'
-          }
-        ],
-        city: [
-          {
-            required: true,
-            message: '请输入市区',
-            trigger: 'blur'
-          }
-        ],
-        address: [
-          {
-            required: true,
-            message: '请输入地址',
-            trigger: 'blur'
-          }
-        ],
+        name: [{
+          required: true,
+          message: '请输入姓名',
+          trigger: 'blur'
+        }],
+        province: [{
+          required: true,
+          message: '请选择省份',
+          trigger: 'change'
+        }],
+        city: [{
+          required: true,
+          message: '请选择市区',
+          trigger: 'change'
+        }],
+        address: [{
+          required: true,
+          message: '请输入地址',
+          trigger: 'blur'
+        }],
         zip: [
           {
             required: true,
@@ -321,12 +340,11 @@ export default {
           },
           {
             pattern: /^[0-9]{6}$/,
-            message: '邮编为6位数字',
+            message: '邮编格式不正确',
             trigger: 'blur'
           }
         ]
-      },
-      editIndex: -1
+      }
     }
   },
   computed: {
@@ -350,6 +368,9 @@ export default {
   },
   created () {
     this.getUserData()
+    // 初始化省份数据
+    this.provinceOptions = provinceAndCityData
+    console.log(this.provinceOptions)
   },
   mounted () {
     // 在生命周期中获取 store 数据
@@ -458,6 +479,26 @@ export default {
         this.$refs.userForm.clearValidate()
       })
     },
+    // 省份变化时更新城市选项
+    handleProvinceChange (provinceName) {
+      console.log('我其实是区号: ', provinceName)
+      // 清空已选城市
+      this.userForm.city = ''
+
+      if (!provinceName) {
+        this.cityOptions = []
+        return
+      }
+
+      // 查找选中的省份
+      const selectedProvince = this.provinceOptions.find(
+        item => item.value === provinceName
+      )
+
+      // 更新城市选项
+      this.cityOptions = selectedProvince?.children || []
+    },
+
     handleEdit (index, row) {
       this.dialogTitle = '编辑用户'
       this.userForm = JSON.parse(JSON.stringify(row))
