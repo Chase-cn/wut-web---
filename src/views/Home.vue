@@ -114,6 +114,7 @@ export default {
     this.currentTheme = this.$store.state.theme
     // console.log(this.$store.state.userInfo)
     this.username = this.$store.getters.getUserName
+    this.userAvatar = this.$store.getters.getUserAvatar
   },
   beforeRouteLeave (to, from, next) {
     // 离开时提交数据到 Vuex

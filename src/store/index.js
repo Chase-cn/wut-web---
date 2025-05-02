@@ -21,7 +21,10 @@ export default new Vuex.Store({
    */
   state: {
     theme: 'blue', // 默认值
-    userInfo: null // 用户信息初始为null
+    userInfo: {
+      name: '用户',
+      avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+    }
   },
   /**
    * 获取器

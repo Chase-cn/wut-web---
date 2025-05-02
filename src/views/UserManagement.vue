@@ -18,7 +18,7 @@
               <i class="el-icon-menu"></i>
               <span>功能菜单</span>
             </template>
-            <el-menu-item index="1-1">用户管理</el-menu-item>
+            <el-menu-item index="1-1">联系人管理</el-menu-item>
             <el-menu-item index="1-2">文章管理</el-menu-item>
           </el-submenu>
         </el-menu>
@@ -47,7 +47,7 @@
       <!-- 右侧内容区 -->
       <div class="main-content">
         <div class="user-management-container">
-          <h2 class="page-title">用户管理</h2>
+          <h2 class="page-title">联系人管理</h2>
           <div class="operation-bar">
             <el-button
               type="primary"
@@ -85,23 +85,25 @@
               width="60"
               align="center"
             />
-            <el-table-column prop="name" label="姓名" width="120" />
-            <el-table-column prop="province" label="省份" width="120" />
-            <el-table-column prop="city" label="市区" width="120" />
-            <el-table-column prop="address" label="地址" />
-            <el-table-column prop="zip" label="邮编" width="100" />
+            <el-table-column prop="name" label="姓名" width="120"/>
+            <el-table-column prop="province" label="省份" width="120"/>
+            <el-table-column prop="city" label="市区" width="120"/>
+            <el-table-column prop="address" label="地址"/>
+            <el-table-column prop="zip" label="邮编" width="100"/>
             <el-table-column label="操作" width="150" align="center">
               <template slot-scope="scope">
                 <el-button
                   size="mini"
                   @click="handleEdit(scope.$index, scope.row)"
-                >编辑</el-button
+                >编辑
+                </el-button
                 >
                 <el-button
                   size="mini"
                   type="danger"
                   @click="handleDelete(scope.$index, scope.row)"
-                >删除</el-button
+                >删除
+                </el-button
                 >
               </template>
             </el-table-column>
@@ -181,14 +183,16 @@
                 size="mini"
                 @click="handleEdit(index, user)"
                 class="action-btn"
-              >编辑</el-button
+              >编辑
+              </el-button
               >
               <el-button
                 size="mini"
                 type="danger"
                 @click="handleDelete(index, user)"
                 class="action-btn"
-              >删除</el-button
+              >删除
+              </el-button
               >
             </div>
           </div>
@@ -247,6 +251,7 @@
 
 <script>
 import responsiveMixin from '@/utils/responsive'
+import api from '@/api/api'
 
 export default {
   mixins: [responsiveMixin],
@@ -275,21 +280,50 @@ export default {
       },
       rules: {
         name: [
-          { required: true, message: '请输入姓名', trigger: 'blur' },
-          { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+          {
+            required: true,
+            message: '请输入姓名',
+            trigger: 'blur'
+          },
+          {
+            min: 2,
+            max: 10,
+            message: '长度在 2 到 10 个字符',
+            trigger: 'blur'
+          }
         ],
         province: [
-          { required: true, message: '请输入省份', trigger: 'blur' }
+          {
+            required: true,
+            message: '请输入省份',
+            trigger: 'blur'
+          }
         ],
         city: [
-          { required: true, message: '请输入市区', trigger: 'blur' }
+          {
+            required: true,
+            message: '请输入市区',
+            trigger: 'blur'
+          }
         ],
         address: [
-          { required: true, message: '请输入地址', trigger: 'blur' }
+          {
+            required: true,
+            message: '请输入地址',
+            trigger: 'blur'
+          }
         ],
         zip: [
-          { required: true, message: '请输入邮编', trigger: 'blur' },
-          { pattern: /^[0-9]{6}$/, message: '邮编为6位数字', trigger: 'blur' }
+          {
+            required: true,
+            message: '请输入邮编',
+            trigger: 'blur'
+          },
+          {
+            pattern: /^[0-9]{6}$/,
+            message: '邮编为6位数字',
+            trigger: 'blur'
+          }
         ]
       },
       editIndex: -1
@@ -315,7 +349,7 @@ export default {
     }
   },
   created () {
-    this.mockUserData()
+    this.getUserData()
   },
   mounted () {
     // 在生命周期中获取 store 数据
@@ -350,50 +384,63 @@ export default {
         this.changeTheme(this.currentTheme === 'blue' ? 'yellow' : 'blue')
       }
     },
-    // 用户管理相关方法
-    mockUserData () {
-      // 模拟数据
-      const mockData = []
-      const provinces = ['北京', '上海', '广东', '江苏', '浙江', '四川', '湖北']
-      const cities = {
-        北京: ['朝阳区', '海淀区', '东城区', '西城区'],
-        上海: ['黄浦区', '徐汇区', '长宁区', '静安区'],
-        广东: ['广州市', '深圳市', '珠海市', '东莞市'],
-        江苏: ['南京市', '苏州市', '无锡市', '常州市'],
-        浙江: ['杭州市', '宁波市', '温州市', '绍兴市'],
-        四川: ['成都市', '绵阳市', '乐山市', '自贡市'],
-        湖北: ['武汉市', '宜昌市', '襄阳市', '黄石市']
-      }
-      const streets = [
-        '人民路',
-        '解放路',
-        '中山路',
-        '建设路',
-        '和平路',
-        '新华路',
-        '胜利路'
-      ]
-
-      for (let i = 1; i <= 50; i++) {
-        const province = provinces[Math.floor(Math.random() * provinces.length)]
-        const city = cities[province][
-          Math.floor(Math.random() * cities[province].length)
-        ]
-        const street = streets[Math.floor(Math.random() * streets.length)]
-        const num = Math.floor(Math.random() * 100) + 1
-
-        mockData.push({
-          id: i,
-          name: `用户${i}`,
-          province: province,
-          city: city,
-          address: `${street}${num}号`,
-          zip: Math.floor(100000 + Math.random() * 900000).toString()
+    // // 用户管理相关方法
+    // mockUserData () {
+    //   // 模拟数据
+    //   const mockData = []
+    //   const provinces = ['北京', '上海', '广东', '江苏', '浙江', '四川', '湖北']
+    //   const cities = {
+    //     北京: ['朝阳区', '海淀区', '东城区', '西城区'],
+    //     上海: ['黄浦区', '徐汇区', '长宁区', '静安区'],
+    //     广东: ['广州市', '深圳市', '珠海市', '东莞市'],
+    //     江苏: ['南京市', '苏州市', '无锡市', '常州市'],
+    //     浙江: ['杭州市', '宁波市', '温州市', '绍兴市'],
+    //     四川: ['成都市', '绵阳市', '乐山市', '自贡市'],
+    //     湖北: ['武汉市', '宜昌市', '襄阳市', '黄石市']
+    //   }
+    //   const streets = [
+    //     '人民路',
+    //     '解放路',
+    //     '中山路',
+    //     '建设路',
+    //     '和平路',
+    //     '新华路',
+    //     '胜利路'
+    //   ]
+    //
+    //   for (let i = 1; i <= 50; i++) {
+    //     const province = provinces[Math.floor(Math.random() * provinces.length)]
+    //     const city = cities[province][
+    //       Math.floor(Math.random() * cities[province].length)
+    //     ]
+    //     const street = streets[Math.floor(Math.random() * streets.length)]
+    //     const num = Math.floor(Math.random() * 100) + 1
+    //
+    //     mockData.push({
+    //       id: i,
+    //       name: `用户${i}`,
+    //       province: province,
+    //       city: city,
+    //       address: `${street}${num}号`,
+    //       zip: Math.floor(100000 + Math.random() * 900000).toString()
+    //     })
+    //   }
+    //
+    //   this.userList = mockData
+    //   this.total = mockData.length
+    // },
+    getUserData () {
+      // const userData = []
+      api.get('/contacts')
+        .then(response => {
+          // console.log(response)
+          this.userList = response
+          this.total = response.length
         })
-      }
-
-      this.userList = mockData
-      this.total = mockData.length
+        .catch(error => {
+          console.log(error)
+          this.$message.error(error.message)
+        })
     },
     handleAdd () {
       this.dialogTitle = '新增用户'
@@ -551,7 +598,7 @@ export default {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  width:1350px;
+  width: 1350px;
 }
 
 .user-management-container {
@@ -757,7 +804,7 @@ export default {
 @media (max-width: 800px) {
   .main-content {
     padding: 10px;
-    width: 100%;  /*补丁,移动端响应式*/
+    width: 100%; /*补丁,移动端响应式*/
   }
 
   .user-management-container {
