@@ -241,7 +241,7 @@
               v-for="item in provinceOptions"
               :key="item.value"
               :label="item.label"
-              :value="item.value"
+              :value="item.label"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -258,7 +258,7 @@
               v-for="item in cityOptions"
               :key="item.value"
               :label="item.label"
-              :value="item.value"
+              :value="item.label"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -297,6 +297,7 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
+      currentEditeUser: null,
       // 对话框相关
       dialogTitle: '',
       dialogVisible: false,
@@ -481,7 +482,7 @@ export default {
     },
     // 省份变化时更新城市选项
     handleProvinceChange (provinceName) {
-      console.log('我其实是区号: ', provinceName)
+      // console.log('我其实是区号: ', provinceName)
       // 清空已选城市
       this.userForm.city = ''
 
@@ -492,7 +493,7 @@ export default {
 
       // 查找选中的省份
       const selectedProvince = this.provinceOptions.find(
-        item => item.value === provinceName
+        item => item.label === provinceName
       )
 
       // 更新城市选项
@@ -504,51 +505,95 @@ export default {
       this.userForm = JSON.parse(JSON.stringify(row))
       this.editIndex = index
       this.dialogVisible = true
+      this.currentEditeUser = row
       this.$nextTick(() => {
         this.$refs.userForm.clearValidate()
       })
     },
     handleDelete (index, row) {
+      console.log('选定的用户信息', row)
       this.$confirm('确认删除该用户吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
-        .then(() => {
-          this.userList.splice(
-            (this.currentPage - 1) * this.pageSize + index,
-            1
-          )
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
+        .then(async () => {
+          try {
+            // 发送删除请求（假设接口需要用户ID）
+            await api.delete(`/contacts/${row.id}`)
+
+            // 前端删除对应项（保持同步）
+            const deleteIndex = (this.currentPage - 1) * this.pageSize + index
+            this.userList.splice(deleteIndex, 1)
+
+            this.$message.success('删除成功!')
+
+            // 可选：重新获取数据保证一致性（推荐）
+            // this.getUserList()
+          } catch (error) {
+            this.$message.error('删除失败: ' + error.message)
+          }
         })
         .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
+          this.$message.info('已取消删除')
         })
     },
     submitForm () {
       this.$refs.userForm.validate(valid => {
         if (valid) {
+          const params = {
+            ...this.userForm,
+            date: new Date()
+          }
           if (this.editIndex === -1) {
             // 新增
-            this.userForm.id = this.userList.length + 1
-            this.userList.unshift(this.userForm)
+            api.post('/contacts', params, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+              .then(response => {
+                console.log('后台已接收数据: ', response)
+                this.userForm.id = response?.id // this.userList.length + 1 修改删错人的bug
+                this.userList.unshift(this.userForm)
+                this.$message({
+                  message: '操作成功',
+                  type: 'success'
+                })
+              })
+              .catch(error => {
+                this.$message.error(error.message)
+              })
           } else {
             // 编辑
-            const realIndex =
-              (this.currentPage - 1) * this.pageSize + this.editIndex
-            this.userList.splice(realIndex, 1, this.userForm)
+            console.log(this.currentEditeUser)
+            if (this.currentEditeUser == null) {
+              this.$message.error('未知错误: 找不到当前行信息')
+              return false
+            }
+            const id = this.currentEditeUser.id
+
+            api.put(`/contacts/${id}`, params, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+              .then(response => {
+                console.log('后端已修改数据为: ', response)
+                const realIndex =
+                  (this.currentPage - 1) * this.pageSize + this.editIndex
+                this.userList.splice(realIndex, 1, this.userForm)
+                this.$message({
+                  message: '操作成功',
+                  type: 'success'
+                })
+              })
+              .catch(error => {
+                console.log(error.message)
+                this.$message('修改失败')
+              })
           }
           this.dialogVisible = false
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
         } else {
           return false
         }
