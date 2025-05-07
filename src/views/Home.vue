@@ -133,7 +133,7 @@ export default {
         // 用户管理跳转
         this.$router.push('/user-management')
       } else if (index === '1-2') {
-        // 文章管理跳转
+        this.$router.push('/article-management')
       }
     },
     changeTheme (theme) {

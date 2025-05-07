@@ -394,6 +394,7 @@ export default {
         // 用户管理
       } else if (index === '1-2') {
         // 文章管理
+        this.$router.push('/article-management')
       }
     },
     changeTheme (theme) {

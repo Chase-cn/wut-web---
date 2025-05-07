@@ -18,7 +18,7 @@
               <i class="el-icon-menu"></i>
               <span>功能菜单</span>
             </template>
-            <el-menu-item index="1-1">用户管理</el-menu-item>
+            <el-menu-item index="1-1">联系人管理</el-menu-item>
             <el-menu-item index="1-2">文章管理</el-menu-item>
           </el-submenu>
         </el-menu>
@@ -44,11 +44,12 @@
           <span>导航四</span>
         </div>
       </div>
+      <!-- 右侧内容区-->
       <div class="right-part">
         <!-- 顶部栏区-->
         <div :class="['top-bar', currentTheme]">
           <div class="top-bar-content">
-            <el-dropdown class="user-dropdown" @command="handleCommand">
+            <el-dropdown class="user-dropdown" @command="handleUserCommand">
         <span class="dropdown-trigger">
           用户<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
@@ -57,7 +58,7 @@
                   <el-dropdown-item command="calendar">
                     <i class="el-icon-date"></i>日历
                   </el-dropdown-item>
-                  <el-dropdown-item  command="logout">
+                  <el-dropdown-item command="logout">
                     <i class="el-icon-switch-button"></i>退出
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -72,7 +73,7 @@
             <!--          <el-button class="logout-button" type="text" @click="handleLogout">退出登录</el-button>-->
             <h2 style="margin-top: -100px;margin-bottom: 80px;font-size: 30px">欢迎 {{ username }}</h2>
             <div class="avatar-container">
-              <el-avatar :size="350" :src="userAvatar"></el-avatar>
+              <el-avatar :size="300" :src="userAvatar" shape="square"></el-avatar>
             </div>
           </div>
           <div class="info-list">
@@ -107,7 +108,7 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="home">首页</el-dropdown-item>
-              <el-dropdown-item command="user">用户管理</el-dropdown-item>
+              <el-dropdown-item command="user">联系人管理</el-dropdown-item>
               <el-dropdown-item command="article">文章管理</el-dropdown-item>
               <el-dropdown-item command="theme">主题切换</el-dropdown-item>
               <el-dropdown-item command="logout">退出登录</el-dropdown-item>
@@ -171,6 +172,21 @@ export default {
     next()
   },
   methods: {
+    handleUserCommand (command) {
+      if (command === 'logout') {
+        this.$confirm('确定要退出登录吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$store.commit('CLEAR_USER_INFO')
+          this.$router.push('/login')
+        })
+      } else if (command === 'calendar') {
+        // 处理日历点击逻辑
+        console.log('打开日历')
+      }
+    },
     goHome () {
       this.activeMenu = ''
     },
@@ -180,6 +196,7 @@ export default {
         this.$router.push('/user-management')
       } else if (index === '1-2') {
         // 文章管理跳转
+        this.$router.push('/article-management')
       }
     },
     changeTheme (theme) {
@@ -200,7 +217,8 @@ export default {
       this.$confirm('确定要退出登录吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        width: '10px'
       }).then(() => {
         this.$store.commit('CLEAR_USER_INFO')
         this.$router.push('/login')
@@ -271,7 +289,6 @@ export default {
 }
 
 .right-part {
-  //width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -290,7 +307,7 @@ export default {
 }
 
 .top-bar.yellow {
-  background-color: #fef0d7 ; /* 黄色主题背景 */
+  background-color: #fef0d7; /* 黄色主题背景 */
 }
 
 .user-dropdown {
@@ -451,6 +468,9 @@ export default {
 @media (max-width: 800px) {
   .mobile-content .el-table {
     font-size: 14px;
+  }
+  .main-content{
+    width: 100%;
   }
 }
 </style>
