@@ -7,6 +7,7 @@ import ResetPwd from '../views/ResetPwd.vue'
 import UserMng from '../views/UserManagement.vue'
 import HomeAnother from '@/views/Home_another.vue'
 import ArticleMng from '../views/ArticleManagement.vue'
+import ArticleDtl from '../views/ArticleDetail.vue'
 import store from '../store'
 
 Vue.use(VueRouter)
@@ -19,7 +20,8 @@ const routes = [
   // { path: '/home', component: Home, meta: { checkTheme: true } },
   { path: '/home', component: HomeAnother, meta: { checkTheme: true } },
   { path: '/user-management', component: UserMng, meta: { checkTheme: true } },
-  { path: '/article-management', component: ArticleMng, meta: { checkTheme: true } }
+  { path: '/article-management', component: ArticleMng, meta: { checkTheme: true } },
+  { path: '/article-detail', component: ArticleDtl, meta: { checkTheme: true } }
 ]
 
 const router = new VueRouter({

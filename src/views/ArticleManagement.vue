@@ -93,7 +93,8 @@
                       type="primary"
                       size="mini"
                       @click="handleArticleManage(scope.row)"
-                    >进入文章管理</el-button>
+                    >进入文章管理
+                    </el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -291,7 +292,13 @@ export default {
     handleArticleManage (row) {
       this.$message.success(`进入 ${row.name} 的文章管理`)
       // 这里可以跳转到具体的文章管理页面
-      // this.$router.push(`/article-management/${row.id}`);
+      this.$router.push({
+        path: '/article-detail',
+        query: {
+          name: row.name,
+          articleCount: row.articleCount
+        }
+      })
     },
 
     // 处理窗口大小变化
