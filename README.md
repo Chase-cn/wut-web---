@@ -1,24 +1,36 @@
-# experiment-1
+# Vue.js 用户管理系统 - 项目介绍
 
-## Project setup
-```
-npm install
+**课程作业**：刘春老师 Web前端开发课程  
+**技术栈**：Vue.js + Vuex + 响应式布局  
+
+项目已开源，如果对您有帮助欢迎 ⭐Star 支持！
+
+## 🌟 项目亮点
+1. **完整用户体系**：登录/注册/密码找回/修改密码
+2. **多端适配**：完善的响应式布局（含移动端菜单优化）
+3. **第三方登录**：集成微信/QQ/支付宝登录样式
+4. **状态管理**：使用Vuex实现跨页面数据共享
+
+## 🛠️ 核心功能
+- **用户模块**  
+  - 注册/登录功能（含表单验证）
+  - 用户详情页与管理页
+  - 主题切换与跨页面状态保持
+
+- **业务模块**  
+  - 联系人管理（含省市联动表单）
+  - 文章管理系统
+  - 两种首页设计方案
+
+- **工程化**  
+  - 配置代理解决跨域问题
+  - 路由守卫实现权限控制
+
+## 📊 技术实现
+```text
+├─ 响应式布局（适配移动/桌面端）
+├─ Vuex状态管理
+├─ 动态表单交互
+└─ 前后端API对接
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
